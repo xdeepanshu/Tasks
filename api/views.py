@@ -4,28 +4,102 @@ from rest_framework.response import Response
 from tasks.models import Task 
 from api.serializers import TasksSerializer
 from django.shortcuts import get_object_or_404
+from rest_framework.schemas import AutoSchema
+import coreapi
 
 
 class ListTaskView(generics.ListAPIView):
     """
     Returns all the tasks
     """
-    queryset = Task.objects.all()
     serializer_class = TasksSerializer
+    
+    #For showing the get request param in swagger
+    schema = AutoSchema(
+        manual_fields=[
+            coreapi.Field("order", 
+            required=False,
+            location='query',
+            description='describe the ordering either asc or desc. desc by default'),
+        ]
+    )
+    
+    def get_queryset(self):
+        """
+        This view should return a list of all the tasks for
+        order portion of the URL.
+        """
+
+        order = self.request.query_params.get('order', None)
+        print(order)
+        if order == "asc":
+            tasks = Task.objects.order_by('finish_time')
+            return tasks
+        else:
+            tasks = Task.objects.order_by('-finish_time')
+            return tasks
+            
+
 
 class DoneTasksView(generics.ListAPIView):
     """
     Returns all the completed tasks
     """
-    queryset = Task.objects.filter(completed=True)
     serializer_class = TasksSerializer
+
+    schema = AutoSchema(
+        manual_fields=[
+            coreapi.Field("order", 
+            required=False,
+            location='query',
+            description='describe the ordering either asc or desc. desc by default'),
+        ]
+    )
+
+    def get_queryset(self):
+        """
+        This view should return a list of all the tasks for
+        order portion of the URL.
+        """
+        tasks = Task.objects.filter(completed=True)
+
+        order = self.request.query_params.get('order', None)
+    
+        if order == "asc":
+            return tasks.order_by('finish_time')
+        else:
+          return tasks.order_by('-finish_time')
 
 class PendingTasksView(generics.ListAPIView):
     """
     Returns all the pending tasks
     """
-    queryset = Task.objects.filter(completed=False)
     serializer_class = TasksSerializer
+
+    schema = AutoSchema(
+        manual_fields=[
+            coreapi.Field("order", 
+            required=False,
+            location='query',
+            description='describe the ordering either asc or desc. desc by default'),
+        ]
+    )
+
+    def get_queryset(self):
+        """
+        This view should return a list of all the tasks for
+        order portion of the URL.
+        """
+        tasks = Task.objects.filter(completed=False)
+        order = self.request.query_params.get('order', None)
+        
+        if order == "asc":
+            return tasks.order_by('finish_time')
+        else:
+          return tasks.order_by('-finish_time')
+
+
+
 
 
 @api_view(['POST'])

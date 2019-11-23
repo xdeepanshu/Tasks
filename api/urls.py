@@ -3,6 +3,7 @@ from api.views import ListTaskView, DoneTasksView, PendingTasksView, create_new_
 
 urlpatterns = [
     path('', ListTaskView.as_view(), name="all-tasks"),
+    #path('done/', DoneTasksView.as_view(), name="all-done-tasks"),
     path('done/', DoneTasksView.as_view(), name="all-done-tasks"),
     path('pending/', PendingTasksView.as_view(), name="all-pending-tasks"),
     path('create/', create_new_task, name="create-task"),
