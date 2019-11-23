@@ -99,20 +99,14 @@ class PendingTasksView(generics.ListAPIView):
           return tasks.order_by('-finish_time')
 
 
-
-
-
-@api_view(['POST'])
-def create_new_task(request):
+class CreateTask(generics.ListCreateAPIView):
     """
-    Creates new task 
+    Create a new task
     """
-
-    serializer = TasksSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    allowed_methods = ["POST"]
+    queryset = Task.objects.all() 
+    serializer_class = TasksSerializer
 
 
 @api_view(['DELETE'])
