@@ -21,7 +21,8 @@ urlpatterns = [
     url(r'^documents/', include(wagtaildocs_urls)),
 
     url(r'^search/$', search_views.search, name='search'),
-    url(r'^api/', include('api.urls')),
+    #Just one endpoint to work with now so cheating here.
+    url(r'^api/tasks/', include('api.urls')),
 
     #Swagger
     url(r'^docs/', schema_view),
